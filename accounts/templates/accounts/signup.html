@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block script %}
+
+    <link rel="stylesheet" href="{% static '/style/signup_1.css' %}" media="screen">
+    <link rel="stylesheet" href="{% static '/style/signup_2.css' %}" media="screen">
+    <script class="u-script" type="text/javascript" src="{% static '/js/signup_1.js' %}" defer=""></script>
+    <script class="u-script" type="text/javascript" src="{% static '/js/signup_1.js' %}" defer=""></script>
+
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster:400">
+{% endblock script %}
+
+{% load bootstrap5 %} 
+{% load static %}
+
+{% comment %} {% block content %}
+<h1>회원가입</h1>
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit">
+</form>
+{% endblock  %} {% endcomment %} 
+
+
+{% block content %} 
+{% comment %} <div class="wrapper" style="text-align: center;">
+  <h1>회원가입</h1>
+  <form method="POST">
+      {% csrf_token %}
+      아이디: <br>
+      <input name="username" type="text">
+      <br>
+      비밀번호: <br>
+      <input name="password1" type="password">
+      <br>
+      비밀번호 확인: <br>
+      <input name="password2" type="password">
+      <br>
+      이메일: <br>
+      <input name="email" type="email">
+      <br><br>
+      <input type="submit" class="btn btn-primary" value="Sign Up">
+  </form>
+</div>  {% endcomment %}
+
+{% comment %} <div class="container my-3">
+  <div class="row my-3">
+    <div class="col-4">
+      <h4>계정생성</h4>
+    </div>
+  </div> {% endcomment %}
+  
+
+  <section class="u-align-center u-clearfix u-gradient u-section-1" id="carousel_977b">
+    <div class="u-clearfix u-sheet u-sheet-1">
+      <h4 class="u-custom-font u-font-lobster u-text u-text-1">
+        <span class="u-text-palette-2-light-2">A</span>
+        <span class="u-text-palette-1-dark-1">
+          <span class="u-text-palette-3-light-2">n</span>
+          <span class="u-text-palette-4-light-2">i</span>
+        </span>
+        <span class="u-text-palette-2-light-2">A</span>
+        <span class="u-text-palette-5-light-2">c</span>
+      </h4>
+      <div class="u-align-center u-container-style u-group u-radius-30 u-shape-round u-white u-group-1">
+        <div class="u-container-layout u-valign-top u-container-layout-1">
+          <h4 class="u-custom-font u-text u-text-2">영화로 이어지는 공간,<br>'애니악'에 오신 당신을 환영합니다!
+          </h4>
+
+          
+          <div class="u-form u-form-1">
+            <form action="{% url 'accounts:signup' %}" method="POST" class="post-form u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" name="form" style="padding: 0px;">
+              {% csrf_token %}
+              
+              {% if form.errors %}
+              {% for field in form %}
+                
+                  {% for error in field.errors %}  
+                      <div class="alert alert-danger">
+                          <strong>{{ field.label }}</strong>
+                          {{ field.errors }}
+                      </div>
+                  {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}   
+                  <div class="alert alert-danger">
+                      <strong>{{ error }}</strong>
+                  </div>
+              {% endfor %}
+              {% endif %}
+              
+              <div class="u-form u-form-1">
+                <form action="#" method="POST" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" source="email" name="form" style="padding: 0px;">
+                  <div class="u-form-group u-form-name">
+                    <label for="name-4c18" class="u-label">아이디</label>
+                    <input type="text" placeholder="ID" id="username" name="username" class="u-border-2 u-border-palette-4-light-3 u-input u-input-rectangle u-palette-4-light-3 u-radius-10" required="" value="{{ form.username.value|default_if_none:'' }}">
+                  </div>
+
+                  <div class="u-form-group u-form-group-2">
+                    <label for="text-3bf3" class="u-label">이름</label>
+                    <input type="text" placeholder="Your name" id="last_name" name="last_name" class="u-border-2 u-border-palette-4-light-3 u-input u-input-rectangle u-palette-4-light-3 u-radius-10" value="{{ form.last_name.value|default_if_none:'' }}">
+                  </div>
+
+                  <div class="u-form-group u-form-group-3">
+                    <label for="text-1d1d" class="u-label">이메일</label>
+                    <input type="text" placeholder="E-mail" id="email" name="email" class="u-border-2 u-border-palette-4-light-3 u-input u-input-rectangle u-palette-4-light-3 u-radius-10" value="{{ form.email.value|default_if_none:'' }}">
+                  </div>
+                  <div class="u-form-email u-form-group">
+                    <label for="email-4c18" class="u-label">비밀번호</label>
+                    <input type="password" placeholder="Password" id="password1" name="password1" class="u-border-2 u-border-palette-4-light-3 u-input u-input-rectangle u-palette-4-light-3 u-radius-10" required="" value="{{ form.password1.value|default_if_none:'' }}">
+                  </div>
+                  <div class="u-form-group u-form-group-5">
+                    <label for="text-b582" class="u-label">비밀번호 확인</label>
+                    <input type="password" placeholder="Password" id="password2" name="password2" class="u-border-2 u-border-palette-4-light-3 u-input u-input-rectangle u-palette-4-light-3 u-radius-10" value="{{ form.password2.value|default_if_none:'' }}">
+                  </div>
+                  <div class="u-align-right u-form-group u-form-submit">
+                    {% comment %} <a href="#" class="u-active-palette-5-light-2 u-border-5 u-border-active-palette-1-light-3 u-border-hover-palette-4-light-3 u-border-palette-1-light-2 u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-4-light-2 u-palette-1-light-1 u-radius-10 u-btn-1">ENTER ANIAC<br> {% endcomment %}
+                    </a>
+                    <button type="submit" class="u-active-palette-5-light-2 u-border-5 u-border-active-palette-1-light-3 u-border-hover-palette-4-light-3 u-border-palette-1-light-2 u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-4-light-2 u-palette-1-light-1 u-radius-10 u-btn-1">ENTER ANIAC</button>
+          </form>
+                    <input type="submit" value="submit" class="u-form-control-hidden">
+                  </div>
+                    <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
+                    <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div>
+                  <input type="hidden" value="" name="recaptchaResponse">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {% endblock content %}
+      {% comment %} 
+
+              <div>
+                <div class="form-group">
+                    <label for="username">아이디</label>
+                    <input type="text" class="form-control" name="username" id="username"
+                          value="{{ form.username.value|default_if_none:'' }}">
+                </div>
+
+                <div class="form-group">
+                  <label for="last_name">이름</label>
+                  <input type="text" class="form-control" name="last_name" id="last_name"
+                        value="{{ form.last_name.value|default_if_none:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="password1">비밀번호</label>
+                    <input type="password" class="form-control" name="password1" id="password1"
+                          value="{{ form.password1.value|default_if_none:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="password2">비밀번호 확인</label>
+                    <input type="password" class="form-control" name="password2" id="password2"
+                          value="{{ form.password2.value|default_if_none:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="text" class="form-control" name="email" id="email"
+                          value="{{ form.email.value|default_if_none:'' }}">
+                </div>
+              </div>
+              <br>
+              <button type="submit" class="btn btn-primary">생성하기</button>
+          </form>
+        </div>
+        
+        {% endblock %} {% endcomment %}
+
+{% comment %} 
+  <form method="post" class="post-form" action="{% url 'accounts:signup' %}">
+      {% csrf_token %}
+      
+      {% if form.errors %}
+      {% for field in form %}
+          {% for error in field.errors %}  
+              <div class="alert alert-danger">
+                  <strong>{{ field.label }}</strong>
+                  {{ field.errors }}
+              </div>
+          {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}   
+          <div class="alert alert-danger">
+              <strong>{{ error }}</strong>
+          </div>
+      {% endfor %}
+      {% endif %}
+=======
+
+        
+        {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}  
+                <div class="alert alert-danger">
+                    <strong>{{ field.label }}</strong>
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}   
+            <div class="alert alert-danger">
+                <strong>{{ error }}</strong>
+            </div>
+        {% endfor %}
+        {% endif %} 
+          
+        <div>
+          <div class="form-group">
+              <label for="username">아이디</label>
+              <input type="text" class="form-control" name="username" id="username"
+                    value="{{ form.username.value|default_if_none:'' }}">
+          </div>
+          <div class="form-group">
+            <label for="last_name">이름</label>
+            <input type="text" class="form-control" name="last_name" id="last_name"
+                  value="{{ form.last_name.value|default_if_none:'' }}">
+          </div> 
+          <div class="form-group">
+              <label for="password1">비밀번호</label>
+              <input type="password" class="form-control" name="password1" id="password1"
+                    value="{{ form.password1.value|default_if_none:'' }}">
+          </div>
+          <div class="form-group">
+              <label for="password2">비밀번호 확인</label>
+              <input type="password" class="form-control" name="password2" id="password2"
+                    value="{{ form.password2.value|default_if_none:'' }}">
+          </div>
+          <div class="form-group">
+              <label for="email">이메일</label>
+              <input type="text" class="form-control" name="email" id="email"
+                    value="{{ form.email.value|default_if_none:'' }}">
+          </div>
+        </div>
+        <br>
+        <div>
+          <button type="submit" class="btn btn-primary">생성하기</button>
+        </div>
+    </form>
+  </div>
+</div> 
+
+
+{% endblock %} {% endcomment %}

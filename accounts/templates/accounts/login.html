@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+
+{% block script %}
+
+    <link rel="stylesheet" href="{% static '/style/login_1.css' %}" media="screen">
+    <link rel="stylesheet" href="{% static '/style/login_2.css' %}" media="screen">
+    <script class="u-script" type="text/javascript" src="{% static '/js/login_c.js' %}" defer=""></script>
+    <script class="u-script" type="text/javascript" src="{% static '/js/login_cf.js' %}" defer=""></script>
+
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster:400">
+{% endblock script %}
+
+{% block content %}
+    
+    {% comment %} <div class="container" style=" background-color:#e5e5e5; margin-top:150px; padding: 0px; margin-left:500px;">
+        <div style="background-color:#f5f6f7; padding-left:20px; padding-right:20px; padding-bottom:5px; max-width:300px">
+           {% endcomment %}
+
+           <section class="u-align-center u-clearfix u-gradient u-section-1" id="carousel_977b">
+            <div class="u-clearfix u-sheet u-sheet-1">
+              <h4 class="u-custom-font u-font-lobster u-text u-text-1">
+                <span class="u-text-palette-2-light-2">A</span>
+                <span class="u-text-palette-1-dark-1">
+                  <span class="u-text-palette-3-light-2">n</span>
+                  <span class="u-text-palette-4-light-2">i</span>
+                </span>
+                <span class="u-text-palette-2-light-2">A</span>
+                <span class="u-text-palette-5-light-2">c</span>
+              </h4>
+              <div class="u-align-center u-container-style u-group u-radius-30 u-shape-round u-white u-group-1">
+                <div class="u-container-layout u-valign-top u-container-layout-1">
+                  <h4 class="u-custom-font u-text u-text-2">영화로 이어지는 공간,<br>'애니악'에 오신 당신을 환영합니다!
+                  </h4>
+                  <div class="u-expanded-width u-form u-form-1">
+                    
+                    
+            <form method="post" class="post-form" action="{% url 'accounts:login' %}">
+                {% csrf_token %}
+                <div class="u-form-group">
+                    <label for="username" class="u-label">ID</label>
+                    <input type="text" class="form-control" name="username" id="username"
+                            value="{{ form.username.value|default_if_none:'' }}">
+                </div>
+                <div class="u-form-group">
+                    <label for="password" class="u-label">PW</label>
+                    <input type="password" class="form-control" name="password" id="password"
+                            value="{{ form.password.value|default_if_none:'' }}">
+                </div>
+                <br>
+                <div>
+                    <button type="submit" class="u-active-palette-5-light-2 u-border-5 u-border-active-palette-1-light-3 u-border-hover-palette-4-light-3 u-border-palette-1-light-2 u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-4-light-2 u-palette-1-light-1 u-radius-10 u-btn-1">ENTER ANIAC</button>
+                </div>
+
+                <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
+                <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div>
+                <input type="hidden" value="" name="recaptchaResponse">
+            </form>
+            <br>
+        </div> 
+    </div>
+  </div></div></div></div></section>
+  
+
+    {% comment %} <section class="u-align-center u-black u-clearfix u-section-1" src="" id="carousel_cc1a">
+        <div class="u-clearfix u-sheet u-sheet-1">
+          <div class="u-clearfix u-layout-wrap u-layout-wrap-1">
+            <div class="u-gutter-0 u-layout">
+              <div class="u-layout-row">
+                <div class="u-align-center u-container-style u-grey-10 u-layout-cell u-radius-50 u-shape-round u-size-60 u-layout-cell-1">
+                  <div class="u-container-layout u-valign-middle u-container-layout-1">
+                    <div class="u-form u-form-1">
+
+                      <form action="{% url 'accounts:login' %}" method="post" class="u-clearfix u-form-spacing-50 u-form-vertical u-inner-form" style="padding: 0px;" source="email" name="form">
+                        {% csrf_token %}
+
+                        <div class="u-form-group u-form-name u-form-group-1">
+                          <label for="username" class="u-form-control-hidden u-label" wfd-invisible="true"></label>
+                          <input type="text" placeholder="ID" id="username" name="username" class="u-border-2 u-border-white u-input u-input-rectangle u-radius-50 u-white u-input-1" required=""  value="{{ form.username.value|default_if_none:'' }}">
+                        </div>
+                        <div class="u-form-email u-form-group u-form-group-2">
+                          <label for="password" class="u-form-control-hidden u-label" wfd-invisible="true"></label>
+                          <input type="password" id="password" name="password" class="u-border-2 u-border-white u-input u-input-rectangle u-radius-50 u-white u-input-2" required="" placeholder="PW" value="{{ form.password.value|default_if_none:'' }}">
+                        </div>
+                        <div class="u-align-left u-form-group u-form-submit u-form-group-3">
+                          <button type="submit" class="u-active-white u-black u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-dark-1 u-radius-50 u-text-active-black u-text-hover-black u-btn-1">contact us</button>
+                          <input type="submit" value="submit" class="u-form-control-hidden" wfd-invisible="true">
+                        </div>
+                        <div class="u-form-send-message u-form-send-success" wfd-invisible="true"></div>
+                        <div class="u-form-send-error u-form-send-message" wfd-invisible="true"> 로그인 할 수 없습니다 </div> 
+                        <input type="hidden" value="" name="recaptchaResponse" wfd-invisible="true"> 
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> {% endcomment %}
+
+{% endblock content %}
+
+
+
+
