@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div style="padding-top:40px;">
+    <h1 style="padding: 10px 12px; text-decoration: none; color: black; font-size:30px; font-family:'GowunDodum-Regular';" class='text-center'>자유 게시판</h1>
+  </div>
+  
+  <div class="row mt-5">
+    <div class="col-12">
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <div>
+              <th scope="col" class='text-center'>번호</th>
+              <th scope="col" class='text-center' style="width:500px;">제목</th>
+              <th scope="col" class='text-center'>작성자</th>
+            </div>
+            <div>
+              <th scope="col" class='text-center'>작성일</th>
+              <th scope="col" class='text-center'>댓글</th>
+              <th scope="col" class='text-center'>추천</th>
+            </div>
+          </tr>
+        </thead>
+  
+        <tbody>
+          {% for board in boards %}
+          <tr>
+            <th scope="row" class='text-center'>{{ board.pk }}</th>
+            <td>
+              <a style="text-decoration:none; color:black" href="{% url 'community:detail' board.pk %}">
+                {% if board.movie_title %}
+                  [{{ board.movie_title }}]  {{ board.title }}
+                {% else%}
+                  {{ board.title }}
+                {% endif %}
+              </a>
+            </td>
+            <td>{{ board.user }}</td>
+            <td class='text-center'>{{ board.created_at|date:'y-m-d H:i'}}</td>
+            <td style="color:red;" class='text-center'>[{{ board.comment_set.all|length }}]</td>
+            <td class='text-center'>{{ board.like_users.all|length  }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-12">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+
+          {% if boards.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?p={{ boards.previous_page_number }}">
+              Previous
+            </a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#">Previous</a>
+          </li>
+          {% endif %}
+          
+          <li class="page-item">
+            <a class="page-link" href="#">
+              {{ boards.number }} / {{ boards.paginator.num_pages }}
+              </a>
+          </li>
+          {% if boards.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?p={{ boards.next_page_number }}">Next</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#">Next</a>
+          </li>
+          {% endif %}
+          
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <a href="{% url 'community:create'%}">
+        <button class="btn btn-secondary">글쓰기</button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // 1. form 태그(좋아요 버튼) 전부다 가져오기
+    const forms = document.querySelectorAll('.like-form')
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+    forms.forEach(function (form) {
+      
+      form.addEventListener('submit', function (event) {
+        event.preventDefault()
+        // console.log(event)
+        const reviewId = event.target.dataset.id
+        // console.log(csrftoken)
+        axios.post(`http://127.0.0.1:8000/community/${reviewId}/likes/`, {}, {
+          headers: {'X-CSRFToken': csrftoken},
+        })
+        .then(function (response) {
+          console.log(response.data)
+
+          //const count = response.data.count
+          //const liked = response.data.liked
+          
+          const { count, liked } = response.data
+          // console.log(count, liked)
+
+          const likeButton = document.querySelector(`#like-${reviewId}`)
+          if (liked) {
+            likeButton.innerText = '좋아요 취소'
+          } else {
+            likeButton.innerText = '좋아요'
+          }
+          // likeButton.innerText = liked ? '좋아요 취소' : '좋아요'
+
+          const likeCount = document.querySelector(`#like-count-${reviewId}`)
+          likeCount.innerText = count
+
+        })
+        .catch(err => {
+          console.log(err.response.status)
+          if (err.response.status === 401) {
+            window.location.href = '/accounts/login/'
+          }
+        })
+      })
+    })
+  </script>
+{% endblock %}

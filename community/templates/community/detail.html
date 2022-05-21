@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="d-flex justify-content-between"> 
+    <h3 style="font-family:'GowunDodum-Regular'; margin-top:20px;">{{ review.title }}</h3>
+    <br>
+    <h5 style="font-family:'GowunDodum-Regular';  margin-top:30px;">{{ review.user }}</h5>
+
+    <div class="d-flex justify-content-end">
+      {% if request.user == review.user %}
+
+        <form action="{% url 'community:update' review.pk %}" method="POST">
+          {% csrf_token %}
+          <input class="btn btn-secondary" style="font-family:'GowunDodum-Regular'; margin-right:10px; height:40px; margin-top:20px;" type="submit" value="수정">  
+        </form>
+
+        <form id="deletefrm" name="deletefrm" action="{% url 'community:delete' review.pk %}" method="POST">
+          {% csrf_token %} 
+          <input class="btn btn-secondary" style="font-family:'GowunDodum-Regular'; height:40px; margin-top:20px;" type="button" onclick="del()" value="삭제">
+        </form>  
+
+      {% endif %}
+    </div>
+  </div>  
+
+  {% if review.movie_title %}
+    <p style="font-family:'GowunDodum-Regular';">영화 제목: {{ review.movie_title }}</p>
+    <p style="font-family:'GowunDodum-Regular';">평점: {{ review.rank }}</p>
+  {% endif %}
+  <hr>
+  
+  <p style="font-family:'GowunDodum-Regular'; font-size:30px; height:400px; margin-top:30px;">{{ review.content }}</p>
+  <div class='d-flex justify-content-center'>
+    <form class="like-form" data-id="{{ review.pk }}">
+      {% csrf_token %}
+      {% if user in review.like_users.all %}
+        <button style="font-family:'GowunDodum-Regular';" class="btn btn-primary" id="like-{{ review.pk }}">추천 </button> 
+      {% else %}
+        <button style="font-family:'GowunDodum-Regular';" class="btn btn-primary" id="like-{{ review.pk }}">추천</button>
+      {% endif %} 
+      <span id="like-count-{{ review.pk }}" style="margin-left:10px;">{{ review.like_users.all|length }}</span>
+    </form> 
+  </div>
+  <hr>
+
+  {% if comments|length %}
+    <p style="font-family:'GowunDodum-Regular';"><b>전체 댓글 {{ comments|length }}개</b></p>
+  {% endif %}
+
+  {% for comment in comments %}
+    <div style="font-family:'GowunDodum-Regular';"v>
+      <div class="d-flex justify-conten-between">
+        <b>{{ comment.user }}</b> ({{ comment.created_at|date:'y-m-d H:i' }})
+
+        {% if request.user == comment.user %}
+          <form action="{% url 'community:comment_delete' review.pk comment.pk %}" method="POST">
+            {% csrf_token %}
+            <input class="btn_cmt_delete" type="submit" value="x" style="font-family:'GowunDodum-Regular'; margin-left:10px; color:#999; widht:20px; height:25px; vertical-align:top; text-align:center;">
+          </form>
+        {% endif %}
+      </div>  
+      {{ comment.content }}  
+    </div>
+  {% empty %}
+    <p style="font-family:'GowunDodum-Regular';"><b>전체 댓글 0개</b></p>
+  {% endfor %}
+  
+  <hr>
+
+  <form action="{% url 'community:create_comment' review.pk %}" method="POST">
+    {% csrf_token %}
+    
+    <div>
+      <form action="{% url 'community:create_comment' review.pk %}" method="POST">
+        <textarea name="content" id="content" cols="50" rows="5"></textarea>
+        <input class="btn btn-secondary" style="margin-left:20px; margin-bottom:30px; font-family:'GowunDodum-Regular';"  type="submit" value="등록">
+      </form>
+    </div> 
+  </form>
+  
+  <a class="btn btn-secondary" style="text-decoration:none; color:white; font-family:'GowunDodum-Regular';" href="{% url 'community:index' %}">목록으로</a>
+
+
+  <script>
+
+  function del() {
+      if (confirm("정말 삭제하시겠습니까?")) {
+        document.deletefrm.submit()
+      } else { 
+        return false;
+      }
+  }
+
+    const forms = document.querySelectorAll('.like-form')
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+    forms.forEach(function (form) {
+      
+      form.addEventListener('submit', function (event) {
+        event.preventDefault()
+        const reviewId = event.target.dataset.id
+        axios.post(`http://127.0.0.1:8000/community/${reviewId}/likes/`, {}, {
+          headers: {'X-CSRFToken': csrftoken},
+        })
+        .then(function (response) {
+          console.log(response.data)
+
+          const { count, liked } = response.data
+
+          const likeButton = document.querySelector(`#like-${reviewId}`)
+      
+          if (!liked) {
+            likeButton.innerText = '추천'
+          } 
+
+          const likeCount = document.querySelector(`#like-count-${reviewId}`)
+          likeCount.innerText = count
+        })
+        .catch(err => {
+          console.log(err.response.status)
+          if (err.response.status === 401) {
+            window.location.href = '/accounts/login/'
+          }
+        })
+      })
+    })
+  </script>
+{% endblock  %}

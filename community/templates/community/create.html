@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <br><br><br>
+  <form action="" method="POST">
+    {% csrf_token %}
+
+    <div style="font-family:'GowunDodum-Regular';">
+      <div class="form-group">
+          <label for="title">제목</label>
+          <input type="text" class="form-control" name="title" id="title"
+                value="{{ form.title.value|default_if_none:'' }}" style="width:500px;">
+      </div>
+      <div class="form-group">
+        <label for='movie_title'>영화 제목</label>
+        <input type="text" class="form-control" name='movie_title' id='movie_title'
+              value="{{ form.movie_title.value|default_if_none:''}}" style="width:500px;">
+      </div> 
+      <div class="form-group">
+          <label for="rank">평점</label>
+          <input type="text" class="form-control" name="rank" id="rank"
+                value="{{ form.rank.value|default_if_none:'' }}" style="width:150px;">
+      </div>
+      <br>
+      <div class="form-group">
+          <label for="content"></label>
+          <textarea name="content" id="content" cols="60" rows="10"></textarea>
+      </div>
+    </div>
+
+    <br><br>
+
+    <a class="btn btn-secondary" style="text-decoration:none; color:white; font-family:'GowunDodum-Regular';" href="{% url 'community:index' %}">취소</a>
+    <input class="btn btn-secondary" style="font-family:'GowunDodum-Regular';" type="submit" value="등록">  
+  </form>
+{% endblock %}
