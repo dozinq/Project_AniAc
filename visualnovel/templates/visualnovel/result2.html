@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static '/style/result_page_2.css' %}" media="screen">
+    <link rel="stylesheet" href="{% static '/style/result_page_home.css' %}" media="screen">
+    <script class="u-script" type="text/javascript" src="{% static '/js/result_page_jquery.js' %}" defer=""></script>
+    <script class="u-script" type="text/javascript" src="{% static '/js/result_page_nicepage.js' %}" defer=""></script>
+    <meta name="generator" content="Nicepage 4.11.3, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,200,300,400,500,600,700,800,900">
+
+    <section class="u-clearfix u-palette-3-light-1 u-section-1" id="carousel_7e7d" style="background-color:#adcce9">
+        <div class="u-expanded-width u-palette-3-light-2 u-shape u-shape-rectangle u-shape-1" style="background-color:#77aad9"></div>
+        <div class="u-clearfix u-group-elements u-group-elements-1">
+          <div class="u-border-3 u-border-palette-2-light-2 u-shape u-shape-svg u-text-custom-color-2 u-shape-2">
+            <svg class="u-svg-link" preserveAspectRatio="none" viewBox="0 0 160 130" style="fill:#f5f7fa"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-c118" stroke="#858e99"></use></svg>
+            <svg class="u-svg-content" viewBox="-1.5 -1.5 163 133" x="0px" y="0px" id="svg-c118" style="enable-background:new 0 0 160 130;" style="background-color: #77aad9;"><path d="M148.3,0H11.7C5.3,0,0,5.2,0,11.5v79.8c0,6.4,5.3,11.5,11.7,11.5h56L67.6,130l24.2-27.2h56.5c6.5,0,11.7-5.2,11.7-11.5V11.5
+      C160,5.2,154.7,0,148.3,0z"></path></svg>
+          </div>
+          {% comment %} 이미지 삽입! {% endcomment %}
+          <img src="{% static '/images/kai4.png' %}" class="u-align-left u-image u-image-1" data-image-width="724" data-image-height="1023" alt="daisy">
+          
+          <h4 class="u-custom-font u-text u-text-1">"가져가. 마지막 선물이야."</h4>
+        </div>
+
+        <div class="u-list u-list-1">
+            <div class="u-repeater u-repeater-1">
+                {% comment %} poster_path 지정! {% endcomment %}
+              <div class="u-align-left u-container-style u-image u-list-item u-radius-22 u-repeater-item u-shape-round u-image-2" data-image-width="1889" data-image-height="1080" style="background-image: url('https://image.tmdb.org/t/p/w500/{{ pop_movie1.poster_path }}')">
+                <div class="u-container-layout u-similar-container u-container-layout-1">
+                  <h2 class="u-custom-font u-font-roboto-slab u-text u-text-grey-25 u-text-2">1</h2>
+                </div>
+              </div>
+              <div class="u-align-left u-container-style u-image u-list-item u-radius-22 u-repeater-item u-shape-round u-image-3" data-image-width="1889" data-image-height="1080" style="background-image: url('https://image.tmdb.org/t/p/w500/{{ pop_movie2.poster_path }}')">
+                <div class="u-container-layout u-similar-container u-container-layout-2">
+                  <h2 class="u-custom-font u-font-roboto-slab u-text u-text-grey-25 u-text-3">2</h2>
+                </div>
+              </div>
+              <div class="u-align-left u-container-style u-image u-list-item u-radius-22 u-repeater-item u-shape-round u-image-4" data-image-width="1889" data-image-height="1080" style="background-image: url('https://image.tmdb.org/t/p/w500/{{ pop_movie3.poster_path }}')">
+                <div class="u-container-layout u-similar-container u-container-layout-3">
+                  <h2 class="u-custom-font u-font-roboto-slab u-text u-text-grey-25 u-text-4">3</h2>
+                </div>
+              </div>
+              <div class="u-align-left u-container-style u-image u-list-item u-radius-22 u-repeater-item u-shape-round u-image-5" data-image-width="1889" data-image-height="1080" style="background-image: url('https://image.tmdb.org/t/p/w500/{{ pop_movie4.poster_path }}')">
+                <div class="u-container-layout u-similar-container u-container-layout-4">
+                  <h2 class="u-custom-font u-font-roboto-slab u-text u-text-grey-25 u-text-5">4</h2>
+                </div>
+              </div>
+              <div class="u-align-left u-container-style u-image u-list-item u-radius-22 u-repeater-item u-shape-round u-image-6" data-image-width="1889" data-image-height="1080" style="background-image: url('https://image.tmdb.org/t/p/w500/{{ pop_movie5.poster_path }}')">
+                <div class="u-container-layout u-similar-container u-container-layout-5">
+                    {% comment %} <img src="https://image.tmdb.org/t/p/w185{{ pop_movie1.poster_path }}" alt=""> {% endcomment %}
+                  <h2 class="u-custom-font u-font-roboto-slab u-text u-text-grey-25 u-text-6">5</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        <div class="u-list u-list-2">
+            <div class="u-repeater u-repeater-2">
+              <div class="u-container-style u-list-item u-repeater-item">
+                <div class="u-container-layout u-similar-container u-container-layout-6">
+                  <h4 class="u-custom-font u-custom-item u-text u-text-7">{{ pop_movie1.title }}</h4>
+                </div>
+              </div>
+              <div class="u-container-style u-list-item u-repeater-item">
+                <div class="u-container-layout u-similar-container u-container-layout-7">
+                  <h4 class="u-custom-font u-custom-item u-text u-text-default u-text-8">{{ pop_movie2.title }}</h4>
+                </div>
+              </div>
+              <div class="u-container-style u-list-item u-repeater-item">
+                <div class="u-container-layout u-similar-container u-container-layout-8">
+                  <h4 class="u-custom-font u-custom-item u-text u-text-default u-text-9">{{ pop_movie3.title }}</h4>
+                </div>
+              </div>
+              <div class="u-container-style u-list-item u-repeater-item">
+                <div class="u-container-layout u-similar-container u-container-layout-9">
+                  <h4 class="u-custom-font u-custom-item u-text u-text-default u-text-10">{{ pop_movie4.title }}</h4>
+                </div>
+              </div>
+              <div class="u-container-style u-list-item u-repeater-item">
+                <div class="u-container-layout u-similar-container u-container-layout-10">
+                  <h4 class="u-custom-font u-custom-item u-text u-text-default u-text-11">{{ pop_movie5.title }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="u-clearfix u-group-elements u-group-elements-2">
+            <a href="{% url 'visualnovel:index' %}" class="u-border-1 u-border-palette-2-light-1 u-btn u-btn-round u-button-style u-custom-font u-palette-2-light-2 u-radius-4 u-text-black u-text-hover-black u-btn-1" style="background-color:#f5f7fa; border-color:rgb(133, 142, 153);">메인 화면으로 돌아가기&nbsp;<span class="u-file-icon u-icon u-text-black u-icon-1">
+                <img src="{% static '/images/result_page_img1.png' %}" alt=""></span>
+            </a>
+            {% comment %} 여기도 수정! {% endcomment %}
+            <a href="{% url 'visualnovel:visualnovel2' %}" class="u-border-2 u-border-palette-3-dark-1 u-btn u-btn-round u-button-style u-custom-font u-palette-3-light-2 u-radius-6 u-text-palette-2-dark-1 u-btn-2" style="background-color: #77aad9; color:white; border-color:#4c7397;">&nbsp; &nbsp; 카이와 다시 대화하기</a><span class="u-file-icon u-icon u-text-palette-2-dark-2 u-icon-2">
+                <img src="{% static '/images/result_page_img2.png' %}" alt=""></span>
+          </div>
+        </section>
+
+{% endblock content %}

@@ -1,0 +1,709 @@
+{% extends 'base.html' %}
+
+{% comment %} 데이지 씬! {% endcomment %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static '/style/ani.css' %}">
+<link rel="stylesheet" href="{% static '/style/reset.css' %}">
+<link rel="stylesheet" href="{% static '/style/frame.css' %}">
+<link rel="stylesheet" href="{% static '/style/selector.css' %}">
+<link rel="stylesheet" href="{% static '/style/result.css' %}">
+<script src="{% static '/js/html2canvas.min.js' %}"></script>
+
+<div id="whole-wrapper">
+  <div id="character-wrapper">
+    {% comment %} <img src="{% static '/images/char.png' %}" alt=""> {% endcomment %}
+  </div>
+  <div id="chat-wrapper">
+    <div id="name"></div>
+    <div id="text-wrapper" onclick="parse(++cursor)">
+      <div id="text"></div>
+      <div id="next">
+        &gt;
+      </div>
+    </div>
+    <div id="setting">
+      <span onclick="parse(--cursor)">Back</span>
+      <span><a href="{% url 'visualnovel:index' %}">Quit</a></span>
+    </div>
+  </div>
+  <div id="selector-wrapper">
+    <ul id="selector"></ul>
+  </div>
+  <div id="result-wrapper">
+    <button id="result" onclick="move()">
+      {% csrf_token %}
+    </button>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  let cursor = 0;
+  let favor = {
+    "{{ user_name }}": 0,
+  };
+  let currentPhase = "start";
+
+  const scenario = {
+    "start": [
+      {
+        {% comment %} #1. 주말 아침, 방 안. {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "'아.. 주말인데..'",
+        "bg": '{% static '/images/room2.jpg' %}',
+        "image": {
+          "src": '{% static '/images/man4.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'아.. 주말인데.. 너무 심심하다..'",
+        "image": {
+          "src": '{% static '/images/man3.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'영화나 보러 갈까?!'",
+        "image": {
+          "src": '{% static '/images/man5.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        {% comment %} #2. 공터 {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "'무작정 나오긴 했는데.. 무슨 영화 봐야 되나..'",
+        "bg": '{% static '/images/street.jpg' %}',
+        "image": {
+          "src": '{% static '/images/man4.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": " . . . . . ",
+        "image": {
+          "src": '{% static '/images/man2.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'하.. 끌리는 영화가 없네..'",
+        "image": {
+          "src": '{% static '/images/man7.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        {% comment %} #3. 영화관 앞 {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "'윽..'",
+        "bg": '{% static '/images/theater_entrance.jpg' %}',
+        "image": {
+          "src": '{% static '/images/man2.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'윽.. 벌써 영화관 도착했네..'",
+        "image": {
+          "src": '{% static '/images/man4.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'일단 들어가 보자..!'",
+        "image": {
+          "src": '{% static '/images/man3.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        {% comment %} #4. (텅 빈)영화관 매표소 {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "...저기요..",
+        "bg": '{% static '/images/box_office.jpg' %}',
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "...저기요.. 볼만한 영화 뭐가 있을까요?",
+      },
+
+      {
+        {% comment %} #5. 영화관 매표소 - 데이지 등장! {% endcomment %}
+        "name": "???",
+        "text": "앗, 안녕하세요!!",
+        "image": {
+          "src": '{% static '/images/daisy1.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "???",
+        "text": "행복을 전하는 애니악!!",
+        "image": {
+          "src": '{% static '/images/daisy2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "행복을 전하는 애니악!! 저는 데이지에요~!",
+        "image": {
+          "src": '{% static '/images/daisy2.png' %}',
+          "alt": 'manager'
+        }
+      },
+
+      {
+        "name": "{{ user_name }}",
+        "text": "아.. 네.",
+        "image": {
+          "src": '{% static '/images/man5.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "아.. 네. 어떤 영화 봐야 할지 모르겠어서요.",
+        "image": {
+          "src": '{% static '/images/man3.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        "name": "데이지",
+        "text": "앗! 그런가요?",
+        "image": {
+          "src": '{% static '/images/daisy1.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "앗! 그런가요? 그럼 데이지가 추천해줄게요~!",
+        "image": {
+          "src": '{% static '/images/daisy2.png' %}',
+          "alt": 'manager'
+        }
+      },
+
+      {
+        "name": "{{ user_name }}",
+        "text": "'뭐야.. 오글거려..'",
+        "image": {
+          "src": '{% static '/images/man2.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        "name": "데이지",
+        "text": "어?! 표정이 왜 그러세요?",
+        "image": {
+          "src": '{% static '/images/daisy4.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "어?! 표정이 왜 그러세요? 싫으시면...",
+        "image": {
+          "src": '{% static '/images/daisy5.png' %}',
+          "alt": 'manager'
+        }
+      },
+
+      {
+        "name": "{{ user_name }}",
+        "text": "아, 아니에요.",
+        "image": {
+          "src": '{% static '/images/man5.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "아, 아니에요. 추천해주세요.",
+        "image": {
+          "src": '{% static '/images/man6.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "네에~",
+        "image": {
+          "src": '{% static '/images/daisy2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "네에~ 그럼 고객님께 몇 가지 질문을 드릴게요!",
+        "image": {
+          "src": '{% static '/images/daisy2.png' %}',
+          "alt": 'manager'
+        }
+      },
+
+      {
+        {% comment %} #6. 데이지의 질문 1-1! {% endcomment %}
+        "name": "데이지",
+        "text": "첫 번째 질문! 한국 영화와 외국 영화 중에서 보통 무엇을 더 좋아하시나요?",
+        "image": {
+          "src": '{% static '/images/daisy2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "저는 한국 배우들이 출연한 작품이 좋더라고요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 10000
+            }
+            ],
+            "jump": "next_question"
+          },
+          {
+            "text": "저는 외국 영화를 더 자주 보는 것 같아요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 0
+            }
+            ]
+          },
+        ]
+      },
+      {
+        {% comment %} #7. 데이지의 질문 1-2! {% endcomment %}
+        "name": "데이지",
+        "text": "음.. 어떤 나라의 영화인지 정확히 말해줄 수 있어요?",
+        "image": {
+          "src": '{% static '/images/daisy5.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "미국에서 제작한 영화를 좋아해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 20000
+            }
+            ],
+            "jump": "next_question"
+          },
+          {
+            "text": "일본 영화가 재밌죠.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 30000
+            }
+            ],
+            "jump": "next_question"
+          },
+          {
+            "text": "잘 모르겠어요.. 애매하네요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 40000
+            }
+            ],
+            "jump": "next_question"
+          },
+        ],
+      }
+    ],
+    "next_question": [
+      {
+        {% comment %} #8. 데이지의 질문 2! {% endcomment %}
+        "name": "데이지",
+        "text": "아하! 그럼 두 번째 질문!",
+        "image": {
+          "src": '{% static '/images/daisy1.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "애니메이션 영화는 어떻게 생각해요?",
+        "image": {
+          "src": '{% static '/images/daisy2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "만화영화 좋아해요. 귀엽잖아요. 하하.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 1000
+            }
+            ],
+          },
+          {
+            "text": "음.. 저는 사람이 나오는 영화가 잘 이입되더라고요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 2000
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #9. 데이지의 질문 3! {% endcomment %}
+        "name": "데이지",
+        "text": "그래요?! 그럼..",
+        "image": {
+          "src": '{% static '/images/daisy4.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "그래요?! 그럼.. 어떤 장르를 좋아하세요~?",
+        "image": {
+          "src": '{% static '/images/daisy1.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "주로 로맨스 영화를 즐겨 봐요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 100
+            }
+            ],
+          },
+          {
+            "text": "판타지 영화나 모험하는 영화를 좋아해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 200
+            }
+            ]
+          },
+          {
+            "text": "공포 영화나 스릴러를 좋아해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 300
+            }
+            ]
+          },
+          {
+            "text": "오늘은 가볍게 코미디 영화를 보고 싶네요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 400
+            }
+            ]
+          },
+          {
+            "text": "가끔은 감동적인 영화를 보곤 해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 500
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #10. 데이지의 질문 4! {% endcomment %}
+        "name": "데이지",
+        "text": "앗! 저랑 취향이 같네요..",
+        "image": {
+          "src": '{% static '/images/daisy3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "앗! 저랑 취향이 같네요.. 같이 영화보고 싶다..",
+        "image": {
+          "src": '{% static '/images/daisy3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "으앗, 바보!!",
+        "image": {
+          "src": '{% static '/images/daisy6.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "으앗, 바보!! 속으로만 생각한다는걸..",
+        "image": {
+          "src": '{% static '/images/daisy6.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "으앗, 바보!! 속으로만 생각한다는걸.. 죄송해요!!",
+        "image": {
+          "src": '{% static '/images/daisy6.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "질문 이어서 할게요! 고객님은 최신 영화를 좋아하시나요?",
+        "image": {
+          "src": '{% static '/images/daisy1.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "네. 저는 최근에 나온 영화가 좋아요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 10
+            }
+            ],
+          },
+          {
+            "text": "아뇨.. 오래된 영화도 자주 보곤 해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 20
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #11. 데이지의 질문 5! {% endcomment %}
+        "name": "데이지",
+        "text": "어쩜 좋아.. 이것도 저랑 같네요!!",
+        "image": {
+          "src": '{% static '/images/daisy3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "이제 마지막 질문만 남았어요..!",
+        "image": {
+          "src": '{% static '/images/daisy3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "평소에 영화 보기 전에 평점이나 리뷰를 먼저 확인하시나요?",
+        "image": {
+          "src": '{% static '/images/daisy1.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "네. 다른 사람들 리뷰 믿고 보는 거죠.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 1
+            }
+            ],
+          },
+          {
+            "text": "아뇨, 귀찮게 뭘.. 느낌대로 가는 거죠.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 2
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #12. 영화 추천 결과 도출 {% endcomment %}
+        "name": "데이지",
+        "text": "으앗!! 너무 신기해요..",
+        "image": {
+          "src": '{% static '/images/daisy1.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "으앗!! 너무 신기해요.. 저랑 취향이 다 똑같아요!",
+        "image": {
+          "src": '{% static '/images/daisy3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "이렇게 헤어지긴 아쉽지만..",
+        "image": {
+          "src": '{% static '/images/daisy6.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "데이지",
+        "text": "이렇게 헤어지긴 아쉽지만.. 제가 추천드릴 영화를 말씀드릴게요!",
+        "image": {
+          "src": '{% static '/images/daisy3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "result":
+        {
+        "text": "데이지의 영화 추천 결과 보러 가기!"
+        }
+      },
+    ]
+  }
+
+  {% comment %} 결과는 각각 다른 페이지로 이동시킬 수 있도록 하자! {% endcomment %}
+  function move() {
+    const argument = Object.values(favor);
+    location.href = "/visualnovel/result1/" + argument;
+  }
+
+  const addFavor = (v) => {
+    v.forEach(i => {
+      favor[i.name] += i.cnt;
+    })
+  }
+
+  const jumping = (jump) => {
+    currentPhase = jump
+    cursor = 0;
+    parse(0);
+  }
+
+  const handleSelect = (v) => {
+    const {variable, jump} = JSON.parse(decodeURI(v))
+
+    if (!!variable) {
+      addFavor(variable)
+    }
+    //jump가 있으면 점프하고, 없으면 시나리오를 이어서 출력합니다.
+    if (!!jump) {
+      jumping(jump)
+    } else {
+      parse(++cursor)
+    }
+  }
+  
+  const parse = (i = 0) => {
+
+    const {text, name, image, select, jump, bg, result} = scenario[currentPhase][i];
+
+    //화면을 초기화 해줍니다.
+    document.getElementById('name').style.display = 'none';
+    document.getElementById('selector-wrapper').style.display = 'none';
+    document.getElementById('chat-wrapper').style.display = 'none';
+    document.getElementById('character-wrapper').innerHTML = null;
+
+    //텍스트를 출력 해 줍니다.
+    document.getElementById('text').innerText = text;
+
+    //이름유무에 따른 출력
+    if (!!name) {
+      document.getElementById('name').style.display = 'grid';
+      document.getElementById('name').innerText = name;
+    }
+
+    //텍스트 유무에 따른 출력
+    if (!!text) {
+      document.getElementById('chat-wrapper').style.display = 'grid';
+      document.getElementById('text').innerText = text;
+    }
+
+    //이미지 유무에 따른 출력
+    if (!!image) {
+      document.getElementById('character-wrapper').innerHTML = `<img src="${image.src}" alt="${image.alt}"/>`
+    }
+
+    //배경 유무에 따른 출력
+    if (!!bg) {
+      document.getElementById('whole-wrapper').style.backgroundImage = `url('${bg}')`
+    }
+
+    //선택지가 있으면 선택지를 출력 해 줍니다.
+    if (!!select) {
+      document.getElementById('selector-wrapper').style.display = 'grid';
+      document.getElementById('selector').innerHTML = select.map(i => {
+        // 선택지에서도 호감도 체크를 해 줍니다.
+        if (!!i.varCheck && !conditionCheck(i.varCheck)) {
+          return null
+        } else {
+          return `<li onclick="handleSelect('${encodeURI(JSON.stringify(i))}')">${i.text}</li>`
+        }
+      }).join('')
+    } else {
+      document.getElementById('selector-wrapper').style.display = 'none';
+    }
+
+    //결과가 도출되면 해당 결과의 페이지로 이동합니다.
+    if (!!result) {
+      document.getElementById('result-wrapper').style.display = 'grid';
+      document.getElementById('result').innerHTML = `<li>${result.text}</li>`;
+    } else {
+      document.getElementById('result-wrapper').style.display = 'none';
+    }
+
+    //jump가 있으면 해당 시나리오 오브젝트로 이동합니다.
+    if (!!jump) {
+      jumping(jump);
+    }
+
+  }
+
+  parse(cursor);
+</script>
+{% endblock script %}

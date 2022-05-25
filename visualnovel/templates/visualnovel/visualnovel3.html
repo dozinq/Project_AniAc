@@ -1,0 +1,753 @@
+{% extends 'base.html' %}
+
+{% comment %} 마일로 씬! {% endcomment %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static '/style/ani.css' %}">
+<link rel="stylesheet" href="{% static '/style/reset.css' %}">
+<link rel="stylesheet" href="{% static '/style/frame.css' %}">
+<link rel="stylesheet" href="{% static '/style/selector.css' %}">
+<link rel="stylesheet" href="{% static '/style/result.css' %}">
+<script src="{% static '/js/html2canvas.min.js' %}"></script>
+
+<div id="whole-wrapper">
+  <div id="character-wrapper">
+    {% comment %} <img src="{% static '/images/char.png' %}" alt=""> {% endcomment %}
+  </div>
+  <div id="chat-wrapper">
+    <div id="name"></div>
+    <div id="text-wrapper" onclick="parse(++cursor)">
+      <div id="text"></div>
+      <div id="next">
+        &gt;
+      </div>
+    </div>
+    <div id="setting">
+      <span onclick="parse(--cursor)">Back</span>
+      <span><a href="{% url 'visualnovel:index' %}">Quit</a></span>
+    </div>
+  </div>
+  <div id="selector-wrapper">
+    <ul id="selector"></ul>
+  </div>
+  <div id="result-wrapper">
+    <button id="result" onclick="move()">
+      {% csrf_token %}
+    </button>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  let cursor = 0;
+  let favor = {
+    "{{ user_name }}": 0,
+  };
+  let currentPhase = "start";
+
+  const scenario = {
+    "start": [
+      {
+        {% comment %} #1. 주말 아침, 방 안. {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "'으악!!'",
+        "bg": '{% static '/images/room4.png' %}',
+        "image": {
+          "src": '{% static '/images/girl2.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'으악!! .. 또 떨어졌어..'",
+        "image": {
+          "src": '{% static '/images/girl7.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'도대체 취업은 언제 될까.. 너무 우울하네..'",
+        "image": {
+          "src": '{% static '/images/girl7.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'하..'",
+        "image": {
+          "src": '{% static '/images/girl8.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'하.. 위로받을 곳도 없다는 게 너무 슬프다.'",
+        "image": {
+          "src": '{% static '/images/girl8.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'일단 나가서 바람이나 쐐야겠어..!'",
+        "image": {
+          "src": '{% static '/images/girl3.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        {% comment %} #2. 공터 {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "'나오니깐 좋다.. '",
+        "bg": '{% static '/images/street4.jpg' %}',
+        "image": {
+          "src": '{% static '/images/girl4.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": " . . . . . ",
+        "image": {
+          "src": '{% static '/images/girl3.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'아, 맞다!! 요즘 인스타에 '애니악' 많이 올라오던데..'",
+        "image": {
+          "src": '{% static '/images/girl6.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'아, 맞다!! 요즘 인스타에 '애니악' 많이 올라오던데.. 우리 동네라고 들었는데?!'",
+        "image": {
+          "src": '{% static '/images/girl6.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'딱 맞는 영화 추천해준다고 했었지?! 나도 한번 가서 추천받아볼까..?'",
+        "image": {
+          "src": '{% static '/images/girl6.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        {% comment %} #3. 영화관 앞 {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "'여기다!! 뭐야 진짜 근처에 있었네!'",
+        "bg": '{% static '/images/theater_entrance.jpg' %}',
+        "image": {
+          "src": '{% static '/images/girl4.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "'얼른 들어가 보자!'",
+        "image": {
+          "src": '{% static '/images/girl4.png' %}',
+          "alt": 'user'
+        }
+      },
+
+      {
+        {% comment %} #4. (텅 빈)영화관 매표소 {% endcomment %}
+        "name": "{{ user_name }}",
+        "text": "안녕하세요!",
+        "bg": '{% static '/images/box_office.jpg' %}',
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "영화 추천해 준다길래 와봤어요!",
+      },
+
+      {
+        {% comment %} #5. 영화관 매표소 - 마일로 등장! {% endcomment %}
+        "name": "???",
+        "text": "안녕하세용~",
+        "image": {
+          "src": '{% static '/images/milo2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "???",
+        "text": "이번 손님으론 요정이 왔네용!",
+        "image": {
+          "src": '{% static '/images/milo3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "반가워요, 저는 애니악의 취향저격 영화추천술사 마일로에요~.",
+        "image": {
+          "src": '{% static '/images/milo3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "그런데 우리 꼬마 요정이 많이 슬퍼 보이는데..",
+        "image": {
+          "src": '{% static '/images/milo9.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "그런데 우리 꼬마 요정이 많이 슬퍼 보이는데.. 무슨 일 있나용?",
+        "image": {
+          "src": '{% static '/images/milo9.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "앗! 다 티가 나나보넹..",
+        "image": {
+          "src": '{% static '/images/girl5.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "앗! 다 티가 나나보넹.. 사실은 시험도 많이 떨어지고 우울하기만 해서요..",
+        "image": {
+          "src": '{% static '/images/girl7.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "저를 위로해 줄 만한 영화가 없을까요?",
+        "image": {
+          "src": '{% static '/images/girl7.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "저 '마일로'도 고객님을 위로해 줄 수 있고, ",
+        "image": {
+          "src": '{% static '/images/milo5.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "저 마일로도 고객님을 위로해 줄 수 있고, 영화도 추천해 드릴 수 있죠!",
+        "image": {
+          "src": '{% static '/images/milo5.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "사실 저도  영화 추천 특수훈련을 받고 나서",
+        "image": {
+          "src": '{% static '/images/milo9.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "사실 저도 영화 추천 특수훈련을 받고 나서 어디에 취업할까 많이 고민도 했었고,",
+        "image": {
+          "src": '{% static '/images/milo9.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "사실 저도 영화 추천 특수훈련을 받고 나서 어디에 취업할까 많이 고민도 했었고, 솔직히 눈도 높아져서 어디에 가야 할까 답이 안 내려지기도 하더라고요..",
+        "image": {
+          "src": '{% static '/images/milo8.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "그렇게 방황하다가 결국은 제가 배운 것들로 사람들을 기쁘게 해주려고,",
+        "image": {
+          "src": '{% static '/images/milo5.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "그렇게 방황하다가 결국은 제가 배운 것들로 사람들을 기쁘게 해주려고, 여기 애니악에 들어왔답니다!",
+        "image": {
+          "src": '{% static '/images/milo3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "아직은 배우는 단계지만, 그래도 보람찬 일을 찾으니 하루하루가 너무 행복하네요!",
+        "image": {
+          "src": '{% static '/images/milo2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "오늘도 우리 꼬마 요정씨께,",
+        "image": {
+          "src": '{% static '/images/milo2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "오늘도 우리 꼬마 요정씨께, 딱 맞는 영화를 추천해 드리면 보람찰 것 같아용!",
+        "image": {
+          "src": '{% static '/images/milo3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "앗, 벌써 위로가 되네요..!",
+        "image": {
+          "src": '{% static '/images/girl1.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "{{ user_name }}",
+        "text": "고맙습니다, 영화 추천해 주세요!",
+        "image": {
+          "src": '{% static '/images/girl1.png' %}',
+          "alt": 'user'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "네~ 몇 가지 질문을 통해 추천드리도록 할게요~!",
+        "image": {
+          "src": '{% static '/images/milo5.png' %}',
+          "alt": 'manager'
+        }
+      },
+
+
+      {
+        {% comment %} #6. 마일로의 질문 1-1! {% endcomment %}
+        "name": "마일로",
+        "text": "우리 꼬마 요정씨는 한국 영화와 외국 영화 중에 무엇을 더 좋아해요~?",
+        "image": {
+          "src": '{% static '/images/milo2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "I LOVE KOREA!",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 10000
+            }
+            ],
+            "jump": "next_question"
+          },
+          {
+            "text": "저는 외국 영화를 더 좋아해요!",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 0
+            }
+            ]
+          },
+        ]
+      },
+      {
+        {% comment %} #7. 마일로의 질문 1-2! {% endcomment %}
+        "name": "마일로",
+        "text": "음.. 어떤 나라의 영화인지 정확히 말해줄 수 있어요?",
+        "image": {
+          "src": '{% static '/images/milo9.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "미국 영화 좋아해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 20000
+            }
+            ],
+            "jump": "next_question"
+          },
+          {
+            "text": "일본 영화가 재밌죠.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 30000
+            }
+            ],
+            "jump": "next_question"
+          },
+          {
+            "text": "잘 모르겠어요.. 신경 안 쓰는 것 같기도 하고?!",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 40000
+            }
+            ],
+            "jump": "next_question"
+          },
+        ],
+      }
+    ],
+    "next_question": [
+      {
+        {% comment %} #8. 마일로의 질문 2! {% endcomment %}
+        "name": "마일로",
+        "text": "아하! 그럼 두 번째 질문!",
+        "image": {
+          "src": '{% static '/images/milo4.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "애니메이션 영화는 어떻게 생각해용?",
+        "image": {
+          "src": '{% static '/images/milo2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "애니메이션 영화 좋아해요!",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 1000
+            }
+            ],
+          },
+          {
+            "text": "별로 안 좋아하는 것 같아요!",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 2000
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #9. 마일로의 질문 3! {% endcomment %}
+        "name": "마일로",
+        "text": "그래요?! 그럼..",
+        "image": {
+          "src": '{% static '/images/milo5.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "그래요?! 그럼.. 어떤 장르를 좋아하세요~?",
+        "image": {
+          "src": '{% static '/images/milo2.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "주로 로맨스 영화를 즐겨 봐요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 100
+            }
+            ],
+          },
+          {
+            "text": "판타지 영화나 모험하는 영화를 좋아해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 200
+            }
+            ]
+          },
+          {
+            "text": "공포 영화나 스릴러를 좋아해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 300
+            }
+            ]
+          },
+          {
+            "text": "코미디 영화가 좋아요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 400
+            }
+            ]
+          },
+          {
+            "text": "오늘은 울고 싶어서.. 감동적인 영화가 좋을 것 같아요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 500
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #10. 마일로의 질문 4! {% endcomment %}
+        "name": "마일로",
+        "text": "아, 그러시군용..",
+        "image": {
+          "src": '{% static '/images/milo7.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "고객님, 최신 영화는 좋아하시나요?",
+        "image": {
+          "src": '{% static '/images/milo4.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "네. 저는 최근에 나온 영화가 좋아요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 10
+            }
+            ],
+          },
+          {
+            "text": "아뇨.. 오래된 영화도 자주 보곤 해요.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 20
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #11. 마일로의 질문 5! {% endcomment %}
+        "name": "마일로",
+        "text": "그러시구나..",
+        "image": {
+          "src": '{% static '/images/milo4.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "그러시구나..이제 마지막 질문할게요.",
+        "image": {
+          "src": '{% static '/images/milo3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "평소에 영화 보기 전에 평점이나 리뷰를 먼저 확인하시나요?",
+        "image": {
+          "src": '{% static '/images/milo4.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "select": [
+          {
+            "text": "네. 다른 사람들 리뷰 믿고 보는 거죠.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 1
+            }
+            ],
+          },
+          {
+            "text": "아뇨, 귀찮게 뭘.. 느낌대로 가는 거죠.",
+            "variable": [
+            {
+              "name": "{{ user_name }}",
+              "cnt": 2
+            }
+            ]
+          },
+        ]
+      },
+
+      {
+        {% comment %} #12. 영화 추천 결과 도출 {% endcomment %}
+        "name": "마일로",
+        "text": "자~ 이제,",
+        "image": {
+          "src": '{% static '/images/milo5.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "자~ 이제, 고객님께 딱 맞는 영화 추천 목록이 나왔습니다! ",
+        "image": {
+          "src": '{% static '/images/milo3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "name": "마일로",
+        "text": "만나서 반가웠어요. 꼬 마 요 정 씨.",
+        "image": {
+          "src": '{% static '/images/milo3.png' %}',
+          "alt": 'manager'
+        }
+      },
+      {
+        "result":
+        {
+        "text": "마일로의 영화 추천 결과 보러 가기!"
+        }
+      },
+    ]
+  }
+
+  {% comment %} 결과는 각각 다른 페이지로 이동시킬 수 있도록 하자! {% endcomment %}
+  function move() {
+    const argument = Object.values(favor);
+    location.href = "/visualnovel/result3/" + argument;
+  }
+
+  const addFavor = (v) => {
+    v.forEach(i => {
+      favor[i.name] += i.cnt;
+    })
+  }
+
+  const jumping = (jump) => {
+    currentPhase = jump
+    cursor = 0;
+    parse(0);
+  }
+
+  const handleSelect = (v) => {
+    const {variable, jump} = JSON.parse(decodeURI(v))
+
+    if (!!variable) {
+      addFavor(variable)
+    }
+    //jump가 있으면 점프하고, 없으면 시나리오를 이어서 출력합니다.
+    if (!!jump) {
+      jumping(jump)
+    } else {
+      parse(++cursor)
+    }
+  }
+  
+  const parse = (i = 0) => {
+
+    const {text, name, image, select, jump, bg, result} = scenario[currentPhase][i];
+
+    //화면을 초기화 해줍니다.
+    document.getElementById('name').style.display = 'none';
+    document.getElementById('selector-wrapper').style.display = 'none';
+    document.getElementById('chat-wrapper').style.display = 'none';
+    document.getElementById('character-wrapper').innerHTML = null;
+
+    //텍스트를 출력 해 줍니다.
+    document.getElementById('text').innerText = text;
+
+    //이름유무에 따른 출력
+    if (!!name) {
+      document.getElementById('name').style.display = 'grid';
+      document.getElementById('name').innerText = name;
+    }
+
+    //텍스트 유무에 따른 출력
+    if (!!text) {
+      document.getElementById('chat-wrapper').style.display = 'grid';
+      document.getElementById('text').innerText = text;
+    }
+
+    //이미지 유무에 따른 출력
+    if (!!image) {
+      document.getElementById('character-wrapper').innerHTML = `<img src="${image.src}" alt="${image.alt}"/>`
+    }
+
+    //배경 유무에 따른 출력
+    if (!!bg) {
+      document.getElementById('whole-wrapper').style.backgroundImage = `url('${bg}')`
+    }
+
+    //선택지가 있으면 선택지를 출력 해 줍니다.
+    if (!!select) {
+      document.getElementById('selector-wrapper').style.display = 'grid';
+      document.getElementById('selector').innerHTML = select.map(i => {
+        // 선택지에서도 호감도 체크를 해 줍니다.
+        if (!!i.varCheck && !conditionCheck(i.varCheck)) {
+          return null
+        } else {
+          return `<li onclick="handleSelect('${encodeURI(JSON.stringify(i))}')">${i.text}</li>`
+        }
+      }).join('')
+    } else {
+      document.getElementById('selector-wrapper').style.display = 'none';
+    }
+
+    //결과가 도출되면 해당 결과의 페이지로 이동합니다.
+    if (!!result) {
+      document.getElementById('result-wrapper').style.display = 'grid';
+      document.getElementById('result').innerHTML = `<li>${result.text}</li>`;
+    } else {
+      document.getElementById('result-wrapper').style.display = 'none';
+    }
+
+    //jump가 있으면 해당 시나리오 오브젝트로 이동합니다.
+    if (!!jump) {
+      jumping(jump);
+    }
+
+  }
+
+  parse(cursor);
+</script>
+{% endblock script %}
