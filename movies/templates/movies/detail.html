@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static '/style/movie_detail.css' %}" media="screen">
+  <link rel="stylesheet" href="{% static '/style/movie_detail2.css' %}" media="screen">
+  <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+
+  <body class="u-body u-xl-mode">
+    <section class="u-clearfix u-grey-10 u-section-1" id="sec-0b03">
+      <div class="u-clearfix u-sheet u-sheet-1"><!--product--><!--product_options_json--><!--{"source":""}--><!--/product_options_json--><!--product_item-->
+        <div class="u-container-style u-expanded-width u-product u-product-1">
+          <div class="u-container-layout u-container-layout-1"><!--product_image-->
+            <img alt="" class="u-image u-image-default u-product-control u-image-1" data-image-width="2000" data-image-height="1333" src="https://image.tmdb.org/t/p/w185/{{movie.poster_path}}"><!--/product_image-->
+            <div class="u-container-style u-group u-shape-rectangle u-white u-group-1">
+              <div class="u-container-layout u-container-layout-2"><!--product_title-->
+                <h2 class="u-align-center u-product-control u-text u-text-1">
+                  <a style="font-family:'GowunDodum-Regular';" class="u-product-title-link" href="#"><!--product_title_content-->{{ movie.title }}<!--/product_title_content--></a>
+                </h2><!--/product_title--><!--product_price-->
+                <div class="u-product-control u-product-price u-product-price-1">
+                  <div class="u-price-wrapper u-spacing-10"><!--product_old_price-->
+                    <div class="u-hide-price u-old-price" style="text-decoration: line-through !important;"><!--product_old_price_content-->$12<!--/product_old_price_content--></div><!--/product_old_price--><!--product_regular_price-->
+                    <div class="u-price" style="font-size: 1.5rem; font-weight: 600; font-family:'GowunDodum-Regular';"><!--product_regular_price_content-->평점: {{movie.vote_average }}<!--/product_regular_price_content-->
+                    / 
+                  {% for genre in movie.genres.all %}
+                    {{ genre.name }}
+                  {% endfor %} </div><!--/product_regular_price-->
+                  </div>
+                </div><!--/product_price--><!--product_content-->
+                <div class="u-align-center u-product-control u-product-desc u-text u-text-2"><!--product_content_content-->
+                  <div style="font-family:'GowunDodum-Regular';"> {{ movie.overview }}</div><!--/product_content_content-->
+                </div><!--/product_content-->
+                
+                <form action="{% url 'movies:likes' movie.pk %}" method='POST'>
+                  {% csrf_token %}
+
+                  {% if user in movie.like_users.all %}
+                    <div style="margin-left:20px;">
+                      <button class="btn btn-link text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
+                          <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  {% else %}
+                    <div style="margin-left:20px;">
+                      <button class="btn btn-link text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
+                          <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  {% endif %}
+                </form>
+
+                <a style="font-family:'GowunDodum-Regular';" href="{% url 'movies:index' %}" class="u-border-0 u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-product-control u-radius-50 u-btn-3"><!--product_button_content-->목록으로<!--/product_button_content--></a><!--/product_button-->
+              </div>
+            </div>
+          </div>
+        </div><!--/product_item--><!--/product-->
+      </div>
+    </section>
+    
+    
+    
+    <section class="u-backlink u-clearfix u-grey-80">
+      <a class="u-link" href="https://nicepage.com/website-templates" target="_blank">
+        <span>Website Templates</span>
+      </a>
+      <p class="u-text">
+        <span>created with</span>
+      </p>
+      <a class="u-link" href="" target="_blank">
+        <span>Website Builder Software</span>
+      </a>. 
+    </section>
+  </body>
+
+{% endblock %}
+
+{% block script %}
+    <script class="u-script" type="text/javascript" src="{% static '/js/movie_detail_jquery.js' %}"  defer=""></script>
+    <script class="u-script" type="text/javascript" src="{% static '/js/movie_detail_nicepage.js' %}" defer=""></script>
+{% endblock script %}

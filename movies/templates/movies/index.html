@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{%load bootstrap5%}
+{% load static %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static '/style/movie.css' %}" media="screen">
+  <link rel="stylesheet" href="{% static '/style/movie2.css' %}" media="screen">
+  <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+  <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,500,500i,600,600i,700,700i,800,800i,900,900i">
+  
+  <body class="u-body u-xl-mode">
+    <section class="u-align-center u-clearfix u-gradient u-section-1" id="carousel_b10e">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <h1 style="font-family:GowunDodum-Regular;" class="u-custom-font u-font-playfair-display u-text u-text-body-alt-color u-text-1">Movies</h1><!--blog--><!--blog_options_json--><!--{"type":"Recent","source":"","tags":"","count":""}--><!--/blog_options_json-->
+        <div class="u-blog u-expanded-width u-blog-1">
+          <div class="u-repeater u-repeater-1"><!--blog_post-->
+          
+            {% for board in boards %}
+              <div class="u-blog-post u-container-style u-repeater-item u-video-cover u-white u-repeater-item-1">
+                <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
+                  <a class="u-post-header-link" href="{% url 'movies:detail' board.pk %}"><!--blog_post_image-->
+                    <img alt="poster" class="u-blog-control u-image u-image-default u-image-1" src="https://image.tmdb.org/t/p/w185/{{ board.poster_path}}"><!--/blog_post_image-->
+                  </a><!--blog_post_metadata-->
+                  <div class="u-blog-control u-metadata u-text-grey-30 u-metadata-1"><!--blog_post_metadata_date-->
+                    <span class="u-meta-date u-meta-icon" style="font-family:GowunDodum-Regular;"><!--blog_post_metadata_date_content-->{{ board.release_date|date:'m월-d일' }}<!--/blog_post_metadata_date_content--></span><!--/blog_post_metadata_date--><!--blog_post_metadata_comments-->
+                    <span class="u-meta-comments u-meta-icon" style="font-family:GowunDodum-Regular;"><!--blog_post_metadata_comments_content-->{{ board.vote_average }}<!--/blog_post_metadata_comments_content--></span><!--/blog_post_metadata_comments-->
+                  </div><!--/blog_post_metadata--><!--blog_post_header-->
+                  <h4 class="u-align-center u-blog-control u-text u-text-2">
+                    <a class="u-post-header-link" href="{% url 'movies:detail' board.pk %}" style="font-family:GowunDodum-Regular;"><!--blog_post_header_content-->{{ board.title }}<!--/blog_post_header_content--></a>
+                  </h4><!--/blog_post_header-->
+                </div>
+              </div><!--/blog_post--><!--blog_post-->
+            {% endfor %}
+            
+
+            </div><!--/blog_post-->
+          </div>
+        </div><!--/blog-->
+
+      <div class="row" style="margin-bottom:100px;">
+        <div class="col-12">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+  
+              {% if boards.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?p={{ boards.previous_page_number }}">
+                  Previous
+                </a>
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#">Previous</a>
+              </li>
+              {% endif %}
+              
+              <li class="page-item">
+                <a class="page-link" href="#">
+                  {{ boards.number }} / {{ boards.paginator.num_pages }}
+                  </a>
+              </li>
+              {% if boards.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?p={{ boards.next_page_number }}">Next</a>
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#">Next</a>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      </div> 
+    </section>
+  </body>  
+
+
+{% endblock %}
+
+{% block script %}
+    <script class="u-script" type="text/javascript" src="{% static '/js/movie_jquery.js' %}"  defer=""></script>
+    <script class="u-script" type="text/javascript" src="{% static '/js/movie_nicepage.js' %}" defer=""></script>
+{% endblock script %}
+
