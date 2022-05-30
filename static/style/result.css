@@ -1,0 +1,38 @@
+#result-wrapper {
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+}
+
+#result {
+  display: flex;
+  flex-flow: column;
+  padding: 0px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#result li {
+  width: 400px;
+  height: 80px;
+  font-size:1.6em;
+  background: rgba(34, 57, 113, 1);
+  box-shadow: 0 8px 32px 0 rgba(212, 212, 222, 0.37);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: blanchedalmond;
+}
+
+/* #selector li:hover{
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 40px 0 rgba(230, 230, 230, 0.5);
+}
+
+#selector li + li {
+  margin-top: 1em;
+} */
